@@ -1,93 +1,178 @@
 <template>
-  <v-row justify="center" align="center">
-    <v-col cols="12" sm="8" md="6">
-      <div class="text-center">
-        <logo />
-        <vuetify-logo />
-      </div>
-      <v-card>
-        <v-card-title class="headline">
-          Welcome to the Vuetify + Nuxt.js template
-        </v-card-title>
+    <v-card
+        elevation="24"
+        class="mx-auto my-12"
+        max-width="750"
+    >
+        <v-card-title><h5>Query Form</h5></v-card-title>
+        <v-card-subtitle><i>Search NCDC stations using this form:</i></v-card-subtitle>
         <v-card-text>
-          <p>
-            Vuetify is a progressive Material Design component framework for
-            Vue.js. It was designed to empower developers to create amazing
-            applications.
-          </p>
-          <p>
-            For more information on Vuetify, check out the
-            <a
-              href="https://vuetifyjs.com"
-              target="_blank"
-              rel="noopener noreferrer"
-            >
-              documentation </a
-            >.
-          </p>
-          <p>
-            If you have questions, please join the official
-            <a
-              href="https://chat.vuetifyjs.com/"
-              target="_blank"
-              rel="noopener noreferrer"
-              title="chat"
-            >
-              discord </a
-            >.
-          </p>
-          <p>
-            Find a bug? Report it on the github
-            <a
-              href="https://github.com/vuetifyjs/vuetify/issues"
-              target="_blank"
-              rel="noopener noreferrer"
-              title="contribute"
-            >
-              issue board </a
-            >.
-          </p>
-          <p>
-            Thank you for developing with Vuetify and I look forward to bringing
-            more exciting features in the future.
-          </p>
-          <div class="text-xs-right">
-            <em><small>&mdash; John Leider</small></em>
-          </div>
-          <hr class="my-3" />
-          <a
-            href="https://nuxtjs.org/"
-            target="_blank"
-            rel="noopener noreferrer"
-          >
-            Nuxt Documentation
-          </a>
-          <br />
-          <a
-            href="https://github.com/nuxt/nuxt.js"
-            target="_blank"
-            rel="noopener noreferrer"
-          >
-            Nuxt GitHub
-          </a>
+            <v-form id="check-query-form" @submit.prevent="query">
+                <v-container>
+                <v-row>
+                    <v-col
+                        cols="6"
+                        sm="6"
+                    >
+                    <v-text-field
+                        v-model="latitude"
+                        filled
+                        label="Latitude"
+                        clearable
+                    ></v-text-field>
+                    </v-col>
+
+                    <v-col
+                        cols="6"
+                        sm="6"
+                    >
+                    <v-text-field
+                        v-model="longitude"
+                        filled
+                        label="Longitude"
+                        clearable
+                    ></v-text-field>
+                    </v-col>
+                </v-row>
+                <v-row>
+                <v-col
+                    cols="6"
+                    lg="6"
+                >
+                <v-menu
+                    ref="menu1"
+                    v-model="menu1"
+                    :close-on-content-click="false"
+                    transition="scale-transition"
+                    offset-y
+                    max-width="290px"
+                    min-width="auto"
+                >
+                <template v-slot:activator="{ on, attrs }">
+                    <v-text-field
+                        v-model="startDateFormatted"
+                        filled
+                        label="Start Date"
+                        hint="MM/DD/YYYY format"
+                        persistent-hint
+                        prepend-icon="mdi-calendar"
+                        v-bind="attrs"
+                        @blur="date1 = parseDate(startDateFormatted)"
+                        v-on="on"
+                    ></v-text-field>
+                </template>
+                <v-date-picker
+                    v-model="date1"
+                    no-title
+                    @input="menu1 = false"
+                ></v-date-picker>
+                </v-menu>
+                </v-col>
+
+                <v-col
+                    cols="6"
+                    lg="6"
+                >
+                <v-menu
+                    ref="menu2"
+                    v-model="menu2"
+                    :close-on-content-click="false"
+                    transition="scale-transition"
+                    offset-y
+                    max-width="290px"
+                    min-width="auto"
+                >
+                <template v-slot:activator="{ on, attrs }">
+                    <v-text-field
+                        v-model="endDateFormatted"
+                        filled
+                        label="End Date"
+                        hint="MM/DD/YYYY format"
+                        persistent-hint
+                        prepend-icon="mdi-calendar"
+                        v-bind="attrs"
+                        @blur="date2 = parseDate(endDateFormatted)"
+                        v-on="on"
+                    ></v-text-field>
+                </template>
+                <v-date-picker
+                    v-model="date2"
+                    no-title
+                    @input="menu2 = false"
+                ></v-date-picker>
+                </v-menu>
+                </v-col>
+                </v-row>
+                </v-container>
+            </v-form>
         </v-card-text>
         <v-card-actions>
-          <v-spacer />
-          <v-btn color="primary" nuxt to="/inspire"> Continue </v-btn>
+            <v-spacer></v-spacer>
+            <v-btn
+                dark
+                rounded
+                color="cyan darken-4"
+                depressed
+                elevation="4"
+                x-large
+                form="check-query-form"
+                @click="query"
+            > Query </v-btn>
+            <v-spacer></v-spacer>
         </v-card-actions>
-      </v-card>
-    </v-col>
-  </v-row>
+    </v-card>
 </template>
 
 <script>
-import Logo from '~/components/Logo.vue'
-import VuetifyLogo from '~/components/VuetifyLogo.vue'
 
 export default {
-  components: {
-    Logo,
-    VuetifyLogo,
+  components: {},
+
+  data: vm => ({
+      date1: new Date().toISOString().substr(0, 10),
+      date2: new Date().toISOString().substr(0, 10),
+      startDateFormatted: vm.formatDate(new Date().toISOString().substr(0, 10)),
+      endDateFormatted: vm.formatDate(new Date().toISOString().substr(0, 10)),
+      menu1: false,
+      menu2: false,
+      latitude: '',
+      longitude: '',
+  }),
+
+  computed: {
+      computedDateFormatted () {
+          return this.formatDate(this.date1)
+      },
   },
+
+  watch: {
+    date1 (val) {
+      this.startDateFormatted = this.formatDate(this.date1)
+    },
+    date2 (val) {
+      this.endDateFormatted = this.formatDate(this.date2)
+    },
+  },
+
+  methods: {
+    query (){
+        console.log("Sending user query input...")
+        this.$router.push({ name: 'station', params: { lat: this.latitude, lng: this.longitude, start: this.date1, end: this.date2 } });
+    },
+    formatDate (date) {
+      if (!date) return null
+
+      const [year, month, day] = date.split('-')
+      return `${month}/${day}/${year}`
+    },
+    parseDate (date) {
+      if (!date) return null
+
+      const [month, day, year] = date.split('/')
+      return `${year}-${month.padStart(2, '0')}-${day.padStart(2, '0')}`
+    },
+  },
+
+
 }
 </script>

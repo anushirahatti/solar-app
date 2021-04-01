@@ -1,0 +1,16 @@
+[
+  {
+    "name": "station",
+    "path": "/station",
+    "component": "/home/as_kbs_gcp/solar-app/pages/station.vue",
+    "chunkName": "pages/station",
+    "_name": "_4e620ed3"
+  },
+  {
+    "name": "index",
+    "path": "/",
+    "component": "/home/as_kbs_gcp/solar-app/pages/index.vue",
+    "chunkName": "pages/index",
+    "_name": "_4437cd31"
+  }
+]
