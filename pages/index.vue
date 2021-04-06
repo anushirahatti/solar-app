@@ -5,9 +5,9 @@
         max-width="750"
     >
         <v-card-title><h5>Query Form</h5></v-card-title>
-        <v-card-subtitle><i>Search NCDC stations using this form:</i></v-card-subtitle>
+        <v-card-subtitle><i>Search NOAA stations using this form:</i></v-card-subtitle>
         <v-card-text>
-            <v-form id="check-query-form" @submit.prevent="query">
+            <v-form id="check-query-form" @submit.prevent="query" v-model="isValid">
                 <v-container>
                 <v-row>
                     <v-col
@@ -18,7 +18,10 @@
                         v-model="latitude"
                         filled
                         label="Latitude"
+                        prepend-icon="mdi-map-marker"
                         clearable
+                        required
+                        :rules="[v => !!v || 'Latitude is required']"
                     ></v-text-field>
                     </v-col>
 
@@ -30,7 +33,26 @@
                         v-model="longitude"
                         filled
                         label="Longitude"
+                        prepend-icon="mdi-map-marker"
                         clearable
+                        required
+                        :rules="[v => !!v || 'Longitude is required']"
+                    ></v-text-field>
+                    </v-col>
+                </v-row>
+                <v-row>
+                    <v-col
+                        cols="6"
+                        sm="6"
+                    >
+                    <v-text-field
+                        v-model="net"
+                        filled
+                        label="Net (in degrees)"
+                        prepend-icon="mdi-map-marker-radius"
+                        clearable
+                        required
+                        :rules="[v => !!v || 'Net is required']"
                     ></v-text-field>
                     </v-col>
                 </v-row>
@@ -52,6 +74,8 @@
                     <v-text-field
                         v-model="startDateFormatted"
                         filled
+                        required
+                        :rules="[v => !!v || 'Start Date is required']"
                         label="Start Date"
                         hint="MM/DD/YYYY format"
                         persistent-hint
@@ -86,6 +110,8 @@
                     <v-text-field
                         v-model="endDateFormatted"
                         filled
+                        required
+                        :rules="[v => !!v || 'End Date is required']"
                         label="End Date"
                         hint="MM/DD/YYYY format"
                         persistent-hint
@@ -117,7 +143,15 @@
                 x-large
                 form="check-query-form"
                 @click="query"
-            > Query </v-btn>
+                :disabled="!isValid"
+            >
+            <v-icon
+              dark
+              left
+              large
+            > mdi-database-search
+            </v-icon> Query
+            </v-btn>
             <v-spacer></v-spacer>
         </v-card-actions>
     </v-card>
@@ -135,8 +169,10 @@ export default {
       endDateFormatted: vm.formatDate(new Date().toISOString().substr(0, 10)),
       menu1: false,
       menu2: false,
-      latitude: '',
-      longitude: '',
+      latitude: null,
+      longitude: null,
+      net: null,
+      isValid: true
   }),
 
   computed: {
@@ -157,7 +193,7 @@ export default {
   methods: {
     query (){
         console.log("Sending user query input...")
-        this.$router.push({ name: 'station', params: { lat: this.latitude, lng: this.longitude, start: this.date1, end: this.date2 } });
+        this.$router.push({ name: 'station', params: { lat: this.latitude, lng: this.longitude, start: this.date1, end: this.date2, net: this.net } });
     },
     formatDate (date) {
       if (!date) return null
