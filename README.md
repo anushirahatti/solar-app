@@ -1,5 +1,7 @@
 # solar-app
 
+![Architecture](https://github.com/anushirahatti/solar-app/blob/main/architecture/SolarApp.jpg)
+
 ## Solar App - NuxtJs Frontend with D3 integration
 
 ### solar app endpoint:
